@@ -3,15 +3,7 @@ sequenceDiagram
     participant browser
     participant server
 
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
-    activate server
-    server-->>browser: URL redirect
-    Note left of server: First the POST method pushes the new data to the variable notes, just doing notes.push({ content: req.body.note, date: new Date() })
-    Note left of server: Status code 302, the servers asks the browser to perfom a new HTTP Request to the adress /exampleapp/notes 
-
-    deactivate server
-
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
     server-->>browser: HTML document
     deactivate server
@@ -21,7 +13,7 @@ sequenceDiagram
     server-->>browser: the css file
     deactivate server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/.js
     activate server
     server-->>browser: the JavaScript file
     deactivate server
