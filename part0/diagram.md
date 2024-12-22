@@ -6,8 +6,8 @@ sequenceDiagram
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
     server-->>browser: URL redirect
-    Note right of server: First the POST method pushes the new data to the variable notes, just doing notes.push({ content: req.body.note, date: new Date() })
-    Note right of server: Status code 302, the servers asks the browser to perfom a new HTTP Request to the adress /exampleapp/notes 
+    Note left of server: First the POST method pushes the new data to the variable notes, just doing notes.push({ content: req.body.note, date: new Date() })
+    Note left of server: Status code 302, the servers asks the browser to perfom a new HTTP Request to the adress /exampleapp/notes 
 
     deactivate server
 
