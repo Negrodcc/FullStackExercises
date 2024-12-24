@@ -9,10 +9,10 @@ function Header(props) {
   );
 }
 
-//this SingleContent module recieve from input the part (string) and the number of exercises (Number)
+//this Part module recieve from input the part (string) and the number of exercises (Number)
 //this it´s a more a module way (or wrapped way) to abstract the functionality of a Content, instead of
 // having only a Content Module which do all the work
-const SingleContent = (props) => {
+const Part = (props) => {
   return (
     <p>
       {props.part} {props.exercise}
@@ -20,13 +20,14 @@ const SingleContent = (props) => {
   )
 }
 
+//(I anticiped the correct use of Content)
 //This Content module recieve 3 SingleContent and only display it with map
 //in this way it's more general
 const Content = (props) => {
   return (
     <>
       {props.parts.map((item, key) => (
-        <SingleContent 
+        <Part 
           key={key} //use it for optimization in map
           part={item.part} 
           exercise={item.exercise} 
