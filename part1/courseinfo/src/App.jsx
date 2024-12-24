@@ -29,8 +29,8 @@ const Content = (props) => {
       {props.parts.map((item, key) => (
         <Part 
           key={key} //use it for optimization in map
-          part={item.part} 
-          exercise={item.exercise} 
+          part={item.name} 
+          exercise={item.exercises} 
         />
       ))}
     </>
@@ -59,9 +59,9 @@ const App = () => {
   const exercises3 = 14
   //for render the Content module, we need to pass the parts array with the 3 SingleContent
   const parts = [
-    { part: 'Fundamentals of React', exercise: 10 },
-    { part: 'Using props to pass data', exercise: 7 },
-    { part: 'State of a component', exercise: 14 }
+    { name: 'Fundamentals of React', exercises: 10 },
+    { name: 'Using props to pass data', exercises: 7 },
+    { name: 'State of a component', exercises: 14 }
   ];
   // Add a unique id to each item in the parts array, to optimize the map function in the Content module
   const partsWithId = parts.map((item) => ({
