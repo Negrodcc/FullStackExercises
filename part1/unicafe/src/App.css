@@ -1,0 +1,70 @@
+
+
+/*
+This CSS was made by ChatGPT, i don't know CSS, so i am just triyng to test it with simples things
+*/
+
+.Button {
+  background-color: #f0f0f0;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  color: #333;
+  font-size: 16px;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.Button:hover {
+  background-color: #e0e0e0;
+  border-color: #888;
+  color: #000;
+}
+
+.table_statistics {
+  width: 100%; /* Hace que la tabla ocupe todo el ancho disponible */
+  table-layout: fixed; /* Fija el ancho de las columnas */
+}
+
+.table_statistics td {
+  width: 50%; /* Cada columna ocupa el 50% del ancho de la tabla */
+  overflow: hidden; /* Previene que el contenido desborde */
+  text-overflow: ellipsis; /* Añade "..." si el contenido es demasiado largo */
+  white-space: nowrap; /* Evita que el texto haga saltos de línea */
+}
+
+
+.TableRow:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.TableRow:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Títulos */
+.Title_S2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+  text-align: left;
+}
+
+/* Contenedor */
+.S1 {
+  text-align: center;
+  margin: 20px;
+}
+
+.S1 h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 18px;
+  font-style: italic;
+  color: #666;
+}
