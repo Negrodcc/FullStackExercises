@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
+import axios from 'axios'
 
 
 const FilterName = ({filterName, handleFilterName}) => {
@@ -34,18 +35,27 @@ const Persons = ({filter_persons}) => {
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'arto Vidal', number: '040-123456', id: 5 },
-    { name: 'ARTO Sanchéz', number: '040-123456', id: 6 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('initial name')
   const [newNumber, setNewNumber] = useState('+56 9xxxxxxxx')
   const [filterName, setFilterName] = useState('')
+
+  //hook which fetch the initial data persons from the server in localhost:3001
+  const hook = () => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('the full response is: ', response)
+        setPersons(response.data)
+    })
+  }
+
+  //useEffect only for the first render
+  useEffect(hook, [])
+
+
 
   //new Name's handler: Event -> Void
   // set the new name with the value gaven in the input, which is within the form
