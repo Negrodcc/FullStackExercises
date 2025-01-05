@@ -1,5 +1,5 @@
 import { useState, useEffect} from 'react'
-import axios from 'axios'
+import Service from './services/persons'
 
 
 const FilterName = ({filterName, handleFilterName}) => {
@@ -24,38 +24,44 @@ const PersonForm = ({newName, handleNameChange, newNumber, handleNumberChange, h
   )
 }
 
-const Persons = ({filter_persons}) => {
+const Persons = ({filter_persons, handlerDeleted}) => {
   return (
     <div>
       {filter_persons.map(person => (
-                  <p key={person.name}>{person.name} {person.number}</p>
+                  <p key={person.name}>{person.name} {person.number} <DeletedButton id = {person.id} handlerDeleted={handlerDeleted} /> </p>
       ))}
   </div>
   )
 }
 
+//Button to deleted a person
+const DeletedButton = ({id, handlerDeleted})  => {
+  //button 
+  return (
+    <button onClick={() => handlerDeleted(id)}>
+      delete
+    </button>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
-
   const [newName, setNewName] = useState('initial name')
   const [newNumber, setNewNumber] = useState('+56 9xxxxxxxx')
   const [filterName, setFilterName] = useState('')
 
   //hook which fetch the initial data persons from the server in localhost:3001
   const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('the full response is: ', response)
-        setPersons(response.data)
+    Service
+    .getAll()
+    .then(allPersons => {
+      console.log("the data recieved from the server is : ", allPersons)
+      setPersons(allPersons)
     })
   }
 
   //useEffect only for the first render
   useEffect(hook, [])
-
-
 
   //new Name's handler: Event -> Void
   // set the new name with the value gaven in the input, which is within the form
@@ -64,8 +70,8 @@ const App = () => {
     setNewName(event.target.value)
   }
 
-  //new Name's handler: Event -> Void
-  // set the new name with the value gaven in the input, which is within the form
+  //new Number's handler: Event -> Void
+  // set the new number with the value gaven in the input, which is within the form
   const handleNumberChange = (event) => {
     console.log("the new number is : ", event.target.value)
     setNewNumber(event.target.value)
@@ -84,16 +90,70 @@ const App = () => {
     //first we need to check that the newName hasn´t already be added 
     const nameDuplicated = persons.some(person => person.name === newName)
     if (nameDuplicated) {
-      //if the name is a duplicated name, we thrown an alert
-      alert(`${newName} is already added to the phonebook`)
+      //if the name is a duplicated name, we see if the number is also duplicated
+      const numberDuplicated = persons.some(person => person.number === newNumber)
+      if (numberDuplicated) {
+        alert(`${newName} is already added to the phonebook and you are not changing the phone nummber : ${newNumber}`)
+      }
+      else {
+        //if there is a new number wee need to update it
+        const userConfirmed = window.confirm(`${newName} is already added to the phonebook, replace the old number with the new one?`)
+        if (userConfirmed) {
+          //original data, and remember that nama is a unique key, so find will always return only one person
+          const personToUpdate = persons.find(person => person.name == newName)
+          const idPerson = personToUpdate.id
+          //person updated with the new number
+          const personUpdated = {...personToUpdate, number : newNumber}
+          Service
+            .update(idPerson, personUpdated) //updated it in the db.json
+            .then(data => {
+              console.log(`the person ${data.name} now has the next phonenumber : ${data.number}`)
+              //set the persons with a new array with the updated data
+              setPersons(persons.map((person) =>
+                                  person.id === data.id ? { ...person, ...data } : person))
+            })
+        }
+        else {
+          console.log("user canceled")
+        }
+      }
+      
     }
     else {
       //if the name is not duplicated, then we added to the persons array
       const newPerson = {name: newName,
                          number: newNumber}
-      console.log("the new persons array is : ", persons.concat(newPerson))
-      setPersons(persons.concat(newPerson))
+      //Post with axios to update the data in the server
+      Service
+        .create(newPerson)
+        .then(data => {
+          console.log("the data returned in the post method is : ", data)
+          const newPersons = persons.concat(data)                        
+          console.log("the new persons array is : ", newPersons)
+          //add the the new person to the array to be able to render it
+          setPersons(newPersons)
+          //how we already add the person, we restart the new variables
+          setNewName('')
+          setNewNumber('')
+        })
     }
+  }
+
+  //Handler which call the destroy function in Service which do a deleted in axios
+  //and use the window confirm
+  const handlerDeleted = (id) => {
+    const userConfirmed = window.confirm("¿Estás seguro de realizar esta acción?");
+    if (userConfirmed) {  
+      Service
+      .destroy(id)
+      .then(data => {
+        console.log(`the person:  ${data.name} is deleted`)
+        setPersons(persons.filter(person => person.id != id))
+      })
+    } else {
+      // Acción si el usuario hace clic en "Cancelar"
+      console.log("El usuario canceló.");
+    } 
   }
 
   //Filter persons array
@@ -107,7 +167,7 @@ const App = () => {
       <h2>Numbers</h2>
       <PersonForm newName={newName} handleNameChange={handleNameChange} 
                   newNumber={newNumber} handleNumberChange={handleNumberChange} handleAddPerson={handleAddPerson} />
-      <Persons filter_persons={filter_persons} />
+      <Persons filter_persons={filter_persons} handlerDeleted={handlerDeleted} />
     </div>
   )
 }
