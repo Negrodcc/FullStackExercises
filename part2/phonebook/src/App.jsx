@@ -1,6 +1,31 @@
 import { useState, useEffect} from 'react'
 import Service from './services/persons'
 
+const SuccessfulMessage = ({message}) => {
+  if (message===null) {
+    null
+  }
+  else {
+    return (
+      <div className='successfulMessage'>
+        {message}
+      </div>
+    ) 
+  }
+}
+
+const ErrorMessage = ({message}) => {
+  if (message===null) {
+    null
+  }
+  else {
+    return (
+      <div className='errorMessage'>
+        {message}
+      </div>
+    ) 
+  }
+}
 
 const FilterName = ({filterName, handleFilterName}) => {
   return (
@@ -49,6 +74,10 @@ const App = () => {
   const [newName, setNewName] = useState('initial name')
   const [newNumber, setNewNumber] = useState('+56 9xxxxxxxx')
   const [filterName, setFilterName] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+
+  const timerMessages = 5000
 
   //hook which fetch the initial data persons from the server in localhost:3001
   const hook = () => {
@@ -111,6 +140,19 @@ const App = () => {
               //set the persons with a new array with the updated data
               setPersons(persons.map((person) =>
                                   person.id === data.id ? { ...person, ...data } : person))
+              setNewName('')
+              setNewNumber('')
+              //add the success message
+              setSuccessMessage(`${data.name} updated with the new number : ${data.number}`)
+              setTimeout(() => setSuccessMessage(null), timerMessages)
+            })
+            .catch( () => {
+              setErrorMessage(`information of ${newName} has already removed from the server`)
+              setNewName('')
+              setNewNumber('')
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, timerMessages)
             })
         }
         else {
@@ -135,6 +177,9 @@ const App = () => {
           //how we already add the person, we restart the new variables
           setNewName('')
           setNewNumber('')
+          //add the success message
+          setSuccessMessage(`${data.name} added`)
+          setTimeout(() => setSuccessMessage(null), 3000)
         })
     }
   }
@@ -162,6 +207,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <SuccessfulMessage message={successMessage} />
+      <ErrorMessage message={errorMessage} />
       <FilterName filterName={filterName} handleFilterName={handleFilterName} />
       <h2>Add a new</h2>
       <h2>Numbers</h2>
